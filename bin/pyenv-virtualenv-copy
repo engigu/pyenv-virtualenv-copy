@@ -62,6 +62,6 @@ for file in $(ls $BIN_FILES_DIR); do
     sed -i "s/$op/$np/g" $file
   fi
 done
-rm -rf $BIN_DIR"__pycache__"
+rm -rf $new_env_bin_dir"__pycache__"
 echo "done!"
 
