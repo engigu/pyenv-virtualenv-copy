@@ -10,3 +10,6 @@ for China, you can use this.
 
 ### usage
 `pyenv virtualenv-copy <existed-name> <new-name>` 
+
+### uninstall
+`rm $(pyenv root)/plugins/pyenv-virtualenv-copy -rf`
