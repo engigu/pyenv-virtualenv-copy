@@ -4,48 +4,43 @@
 # Usage: pyenv virtualenv-copy <existed-name> <new-name>
 #
 
-
 VERSION_DIR="$HOME/.pyenv/versions/"
 
 usage() {
-    echo ""
-    echo "Usage: pyenv virtualenv-copy <existed-name> <new-name>"
+  echo ""
+  echo "Usage: pyenv virtualenv-copy <existed-name> <new-name>"
 }
 
-if [[ $1 == "" ]]
-then
-    echo "must input existed env name!"
-    usage
-    exit 1
+if [[ $1 == "" ]]; then
+  echo "must input existed env name!"
+  usage
+  exit 1
 fi
 
-if [[ $2 == "" ]]
-then
-    echo "must input new env name!"
-    usage
-    exit 1
+if [[ $2 == "" ]]; then
+  echo "must input new env name!"
+  usage
+  exit 1
 fi
 
 existed_env=$1
 new_env=$2
-prefix=`pyenv virtualenv-prefix $existed_env 2>&1`
+prefix=$(pyenv virtualenv-prefix $existed_env 2>&1)
 install_flag="not installed"
 
-if [[ $prefix =~ $install_flag ]]
-then
-    echo "current virtualenv["$existed_env"] not existed"
-    exit 1
+if [[ $prefix =~ $install_flag ]]; then
+  echo "current virtualenv["$existed_env"] not existed"
+  exit 1
 fi
 
 # full path
 full_existed_env_path=$prefix"/envs/"$existed_env
 full_new_env_path=$prefix"/envs/"$new_env
 
-if [[ -d $full_new_env_path ]]
-then
-    echo "env "$new_env" has existed! maybe you have this env already."
-    echo "found path: "$full_new_env_path
-    exit 1
+if [[ -d $full_new_env_path ]]; then
+  echo "env "$new_env" has existed! maybe you have this env already."
+  echo "found path: "$full_new_env_path
+  exit 1
 fi
 
 echo "copying..."
@@ -54,6 +49,19 @@ cp $full_existed_env_path $full_new_env_path -rf
 # ln soft
 cd $VERSION_DIR
 ln -s $full_new_env_path $new_env
+# process bin file
+BIN_FILES_DIR=$VERSION_DIR$new_env"/bin/*"
+existed_env_bin_dir=$full_existed_env_path"/bin/"
+new_env_bin_dir=$full_new_env_path"/bin/"
+file_flag='text'
+for file in $(ls $BIN_FILES_DIR); do
+  file_type=$(file -i $file)
+  if [[ $file_type =~ $file_flag ]]; then
+    op="${existed_env_bin_dir//\//\\/}"
+    np="${new_env_bin_dir//\//\\/}"
+    sed -i "s/$op/$np/g" $file
+  fi
+done
+rm -rf $BIN_DIR"__pycache__"
 echo "done!"
-
 
