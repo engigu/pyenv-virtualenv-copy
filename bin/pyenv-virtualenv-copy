@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Summary: Copy existed virtualenv to new one
+# Summary: Copy existed virtualenv to new env
 #
 # Usage: pyenv virtualenv-copy <existed-name> <new-name>
 #
@@ -44,24 +44,26 @@ if [[ -d $full_new_env_path ]]; then
 fi
 
 echo "copying..."
+
 # do copy
 cp $full_existed_env_path $full_new_env_path -rf
+
 # ln soft
 cd $VERSION_DIR
 ln -s $full_new_env_path $new_env
+
 # process bin file
 BIN_FILES_DIR=$VERSION_DIR$new_env"/bin/*"
 existed_env_bin_dir=$full_existed_env_path"/bin/"
 new_env_bin_dir=$full_new_env_path"/bin/"
-file_flag='text'
 for file in $(ls $BIN_FILES_DIR); do
   file_type=$(file -i $file)
-  if [[ $file_type =~ $file_flag ]]; then
+  if [[ $file_type =~ 'text/plain' ]]; then
     op="${existed_env_bin_dir//\//\\/}"
     np="${new_env_bin_dir//\//\\/}"
     sed -i "s/$op/$np/g" $file
   fi
 done
 rm -rf $new_env_bin_dir"__pycache__"
-echo "done!"
 
+echo "done!"
