@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Summary: Copy existed virtualenv to new env
+# Summary: Copy existed virtualenv to new one
 #
 # Usage: pyenv virtualenv-copy <existed-name> <new-name>
 #
